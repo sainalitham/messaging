@@ -1,0 +1,74 @@
+package poc;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+//import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+//import javax.jms.QueueConnection;
+//import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+//import javax.naming.NamingException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+//import javax.naming.Binding;
+//import javax.naming.NamingEnumeration;
+public class Session1 {
+	Context context;
+	ConnectionFactory connectionFactory;
+	Destination queue;
+	Connection connection;
+	Session session;
+	MessageProducer producer;
+public void Session()
+{
+	
+	
+}
+public void send(String msg)
+{
+	try {
+		context = new InitialContext();
+		connectionFactory = (ConnectionFactory)context.lookup("jms/rxpaceConnectionFactory");      
+		queue = (Destination)context.lookup("jms/rxpaceQueue");
+		connection = connectionFactory.createConnection();
+		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.toString();
+			e.printStackTrace();
+		}
+	try {
+		MessageProducer producer = session.createProducer(queue);
+		TextMessage sntMessage =session.createTextMessage(msg);
+		producer.send(sntMessage);
+		System.out.println("Message Sent successfully.");
+	} catch (Exception e) {
+		e.toString();
+		e.printStackTrace();
+	}
+}
+public String receive()
+{
+	//always call send() first as connection/session are created there - this code is just for POC
+	TextMessage rcvMessage=null;
+	String msg="No message received";
+	try {	
+		MessageConsumer consumer = session.createConsumer(queue);
+        connection.start();
+        rcvMessage = (TextMessage) consumer.receive();
+        msg=rcvMessage.getText();
+        System.out.println("Received Msg = " + msg);
+		connection.close();
+		
+	} catch (Exception e) {		
+		e.toString();
+		e.printStackTrace();
+	};
+	
+     return msg;
+	
+}
+}
