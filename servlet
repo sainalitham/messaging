@@ -1,0 +1,91 @@
+package poc;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class srvlet1
+ */
+@WebServlet("/srvlet1")
+public class srvlet1 extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public srvlet1() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		// set response headers
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		
+		// create HTML form
+		PrintWriter writer = response.getWriter();
+		writer.append("<!DOCTYPE html>\r\n")
+			  .append("<html>\r\n")
+			  .append("		<head>\r\n")
+			  .append("			<title>Form input</title>\r\n")
+			  .append("		</head>\r\n")
+			  .append("		<body>\r\n")
+			  .append("			<form action=\"srvlet1\" method=\"POST\">\r\n")
+			  .append("				Enter Message: \r\n")
+			  .append("				<input type=\"text\" name=\"message\" />\r\n")
+			  .append("				<input type=\"submit\" value=\"Submit\" />\r\n")
+			  .append("			</form>\r\n")
+			  .append("		</body>\r\n")
+			  .append("</html>\r\n");
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String msgrcvd="No msg";
+		String message = request.getParameter("message");
+		Session1 s=new Session1();
+		try {
+		s.send(message);
+		msgrcvd=s.receive();
+		} catch (Exception e)
+		{
+			System.out.print(e.toString());
+		}
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		
+		// create HTML response
+		PrintWriter writer = response.getWriter();
+		writer.append("<!DOCTYPE html>\r\n")
+			  .append("<html>\r\n")
+			  .append("		<head>\r\n")
+			  .append("			<title>Welcome message</title>\r\n")
+			  .append("		</head>\r\n")
+			  .append("		<body>\r\n");
+		if (message != null && !message.trim().isEmpty()) {
+			writer.append("	Message sent to Queue:  " + message + "<p>");
+			writer.append("	Message Received from Queue:  " + msgrcvd + "\r\n");
+		} else {
+			writer.append("	You did not enter any message!\r\n");
+		}
+		writer.append("		</body>\r\n")
+			  .append("</html>\r\n");
+	}
+	
+
+}
