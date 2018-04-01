@@ -1,0 +1,18 @@
+<bean id="emailQueueConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true"> 
+<property name="jndiName" value="java:comp/env/jms/<<Name of JNDI of connection factory>>" /> 
+</bean> 
+
+<bean id="emailQueueDestination" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true"> 
+<property name="jndiName" value="java:comp/env/jms/<<JNDI name of queue>>" /> 
+</bean> 
+
+<bean id="emailQueueTemplate" class="org.springframework.jms.core.JmsTemplate" lazy-init="true"> 
+<property name="connectionFactory" ref="emailQueueConnectionFactory" /> 
+<property name="defaultDestination" ref="emailQueueDestination" /> 
+</bean> 
+
+<bean id="emailSender" class="<<Package>>.EmailSender" lazy-init="true"> 
+<property name="jmsTemplate"> 
+<ref bean="emailQueueTemplate" /> 
+</property> 
+</bean>
